@@ -83,7 +83,30 @@ az functionapp config appsettings set \
   --name "$FUNCTION_APP_NAME" \
   --settings RG_NAME="$RESOURCE_GROUP" VMSS_NAME="$VMSS_NAME"
 
-echo -e "${GREEN}✅ Azure Function configured successfully${NC}"
+echo -e "${GREEN}✅ Azure Function app settings configured successfully${NC}"
+
+# Deploy function code
+echo ""
+echo -e "${CYAN}📦 Deploying Azure Function code...${NC}"
+cd ~/azmon-labs/scripts/function_code
+
+# Create a zip package with the function code
+echo -e "${CYAN}Creating deployment package...${NC}"
+zip -r ../function_deployment.zip . -x "*.git*" "*.DS_Store*" "*.pyc" "__pycache__/*" "local.settings.json"
+
+echo -e "${CYAN}Deploying function code to Azure...${NC}"
+az functionapp deployment source config-zip \
+  --resource-group "$RESOURCE_GROUP" \
+  --name "$FUNCTION_APP_NAME" \
+  --src "../function_deployment.zip"
+
+echo -e "${GREEN}✅ Azure Function code deployed successfully${NC}"
+
+# Clean up deployment package
+rm -f ../function_deployment.zip
+
+# Return to scripts directory  
+cd ~/azmon-labs/scripts
 # Run deployment scripts based on az cli
 # This section will create aks, prometheus, grafana, and other resources as needed
 echo ""
