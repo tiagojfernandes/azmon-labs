@@ -60,6 +60,22 @@ output "vmss_name" {
   value       = module.vmss_windows.vmss_name
 }
 
+# Azure Function Outputs
+output "function_app_name" {
+  description = "Name of the Azure Function App for VMSS shutdown"
+  value       = module.azure_function.function_app_name
+}
+
+output "function_app_id" {
+  description = "ID of the Azure Function App"
+  value       = module.azure_function.function_app_id
+}
+
+output "storage_account_name" {
+  description = "Name of the storage account for Azure Function"
+  value       = module.azure_function.storage_account_name
+}
+
 /*
 
 # VM IP Addresses

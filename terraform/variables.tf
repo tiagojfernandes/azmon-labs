@@ -152,4 +152,23 @@ variable "redhat_vm_size" {
   default     = "Standard_B2s"
 }
 
+# Azure Function Configuration
+variable "function_app_name" {
+  description = "Name of the Azure Function App for VMSS shutdown"
+  type        = string
+  default     = "vmss-shutdown-fn"
+}
+
+variable "storage_account_name" {
+  description = "Name of the storage account for Azure Function (must be globally unique and lowercase)"
+  type        = string
+  default     = "funcstorvmss1234"
+}
+
+variable "app_service_plan_name" {
+  description = "Name of the App Service Plan for Azure Function"
+  type        = string
+  default     = "vmss-fn-plan"
+}
+
 

@@ -188,6 +188,11 @@ redhat_vm_name         = "vm-redhat-lab"
 redhat_admin_username  = "azureuser"
 redhat_admin_password  = "P@ssw0rd123!"
 redhat_vm_size         = "Standard_B2s"
+
+# Azure Function Configuration
+function_app_name      = "vmss-shutdown-fn"
+storage_account_name   = "funcstorvmss1234"
+app_service_plan_name  = "vmss-fn-plan"
 EOF
 
 # Display the created tfvars file

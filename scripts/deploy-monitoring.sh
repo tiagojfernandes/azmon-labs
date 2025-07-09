@@ -67,11 +67,23 @@ REDHAT_PRIVATE_IP=$(jq -r '.redhat_vm_private_ip.value' "$TF_OUTPUTS")
 AKS_CLUSTER=$(jq -r '.aks_name.value' "$TF_OUTPUTS")
 MANAGED_GRAFANA=$(jq -r '.grafana_name.value' "$TF_OUTPUTS")
 PROM_NAME=$(jq -r '.prom_name.value' "$TF_OUTPUTS")
+FUNCTION_APP_NAME=$(jq -r '.function_app_name.value' "$TF_OUTPUTS")
 
 echo -e "${CYAN}Extracted configuration:${NC}"
 echo -e "${CYAN}  - AKS Cluster: ${YELLOW}$AKS_CLUSTER${NC}"
 echo -e "${CYAN}  - Managed Grafana: ${YELLOW}$MANAGED_GRAFANA${NC}"
 echo -e "${CYAN}  - Managed Prometheus: ${YELLOW}$PROM_NAME${NC}"
+echo -e "${CYAN}  - Azure Function: ${YELLOW}$FUNCTION_APP_NAME${NC}"
+
+# Configure Azure Function for VMSS shutdown
+echo ""
+echo -e "${CYAN}🔧 Configuring Azure Function for VMSS auto-shutdown...${NC}"
+az functionapp config appsettings set \
+  --resource-group "$RESOURCE_GROUP" \
+  --name "$FUNCTION_APP_NAME" \
+  --settings RG_NAME="$RESOURCE_GROUP" VMSS_NAME="$VMSS_NAME"
+
+echo -e "${GREEN}✅ Azure Function configured successfully${NC}"
 # Run deployment scripts based on az cli
 # This section will create aks, prometheus, grafana, and other resources as needed
 echo ""

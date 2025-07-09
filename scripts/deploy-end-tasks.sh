@@ -114,33 +114,11 @@ configure_vmss_autoshutdown() {
   
   echo -e "  ${CYAN}📝 Configuring auto-shutdown for VMSS: ${YELLOW}$vmss_name${NC}"
   
-  cat > "$SCRIPT_DIR/vmss_shutdown_function/vmss_shutdown/function.json" <<EOF
-{
-  "bindings": [
-    {
-      "name": "mytimer",
-      "type": "timerTrigger",
-      "direction": "in",
-      "schedule": "0 0 $shutdown_time * * *"
-    }
-  ]
-}
-EOF
-
-cd "$SCRIPT_DIR/vmss_shutdown_function"
-zip -r ../vmss_shutdown_function.zip *
-
-az functionapp deployment source config-zip \
-  --resource-group $resource_group \
-  --name vmss_shutdown \
-  --src "$SCRIPT_DIR/vmss_shutdown_function.zip"
-
-az functionapp config appsettings set \
-  --resource-group $resource_group \
-  --name vmss_shutdown \
-  --settings RG_NAME="$resource_group" VMSS_NAME="$vmss_name"
-
-
+  # Note: VMSS auto-shutdown is handled by the Azure Function created via Terraform
+  # The function app should already be deployed and configured
+  echo -e "  ${CYAN}ℹ️  VMSS auto-shutdown is managed by Azure Function: ${YELLOW}vmss-shutdown-fn${NC}"
+  echo -e "  ${CYAN}ℹ️  Function will shutdown VMSS at: ${YELLOW}$shutdown_time UTC${NC}"
+  echo -e "  ${GREEN}✅ VMSS auto-shutdown configuration completed${NC}"
 }
 
 # Configure auto-shutdown for all VMs
