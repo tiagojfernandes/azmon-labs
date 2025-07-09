@@ -65,6 +65,17 @@ module "dcr_vmss" {
   depends_on = [module.vmss_windows]
 }
 
+# Azure Function for VMSS Auto-Shutdown
+module "azure_function" {
+  source                 = "./modules/azure_function"
+  resource_group_name    = module.resource_group.name
+  location               = var.location
+  function_app_name      = var.function_app_name
+  storage_account_name   = var.storage_account_name
+  app_service_plan_name  = var.app_service_plan_name
+
+  depends_on = [module.resource_group]
+}
 
 /*
 
@@ -404,18 +415,6 @@ module "vm_redhat" {
     Purpose     = "Red Hat VM"
     Project     = "Azure Monitoring"
   }
-}
-
-# Azure Function for VMSS Auto-Shutdown
-module "azure_function" {
-  source                 = "./modules/azure_function"
-  resource_group_name    = module.resource_group.name
-  location               = var.location
-  function_app_name      = var.function_app_name
-  storage_account_name   = var.storage_account_name
-  app_service_plan_name  = var.app_service_plan_name
-
-  depends_on = [module.resource_group]
 }
 
 # Microsoft Sentinel Configuration
