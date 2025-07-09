@@ -41,7 +41,7 @@ module "network" {
   my_ip               = local.my_ip
 }
 
-/*
+
 module "vmss_windows" {
   source              = "./modules/vmss_windows"
   resource_group_name = module.resource_group.name
@@ -61,9 +61,11 @@ module "dcr_vmss" {
   location            = var.location
   workspace_id        = module.log_analytics.workspace_id
   target_resource_id  = module.vmss_windows.vmss_id
+  
+  depends_on = [module.vmss_windows]
 }
 
-*/
+
 
 
 # Network Interface for Ubuntu VM

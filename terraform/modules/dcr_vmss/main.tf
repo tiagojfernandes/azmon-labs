@@ -3,7 +3,6 @@ resource "azurerm_monitor_data_collection_rule" "dcr_vmss" {
   name                = "dcr-tf-vmss"
   location            = var.location
   resource_group_name = var.resource_group_name
-  kind                = "Windows"
 
   data_sources {
     performance_counter {
@@ -55,4 +54,5 @@ resource "azurerm_monitor_data_collection_rule_association" "assoc" {
   name                    = "vmss-dcr-association"
   data_collection_rule_id = azurerm_monitor_data_collection_rule.dcr_vmss.id
   target_resource_id      = var.target_resource_id
+  description             = "Association for VMSS DCR"
 }

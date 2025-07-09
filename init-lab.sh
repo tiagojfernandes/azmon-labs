@@ -14,17 +14,19 @@
 
 set -e
 
+# Color codes for better user experience
+CYAN='\033[0;36m'
+BLUE='\033[0;34m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+
 # Clone the repo (skip if already cloned)
 if [ ! -d "azmon-labs" ]; then
-  echo "Cloning azmon-labs repository..."
+  echo -e "${CYAN}Cloning azmon-labs repository...${NC}"
   git clone https://github.com/tiagojfernandes/azmon-labs.git
 fi
-
-# Change to environment folder
-#cd azmon-labs/terraform/environments/default || {
-#  echo "Error: Terraform environment folder not found."
-#  exit 1
-#}
 
 
 # -------------------------------
@@ -37,15 +39,15 @@ register_provider() {
   local status=$(az provider show --namespace "$ns" --query "registrationState" -o tsv 2>/dev/null || echo "NotRegistered")
 
   if [ "$status" != "Registered" ]; then
-    echo "Registering provider: $ns ..."
+    echo -e "${CYAN}Registering provider: ${YELLOW}$ns${CYAN}...${NC}"
     az provider register --namespace "$ns"
     until [ "$(az provider show --namespace "$ns" --query "registrationState" -o tsv)" == "Registered" ]; do
-      echo "Waiting for $ns registration..."
+      echo -e "${CYAN}Waiting for ${YELLOW}$ns${CYAN} registration...${NC}"
       sleep 5
     done
-    echo "Provider $ns registered successfully."
+    echo -e "${GREEN}Provider ${YELLOW}$ns${GREEN} registered successfully.${NC}"
   else
-    echo "Provider $ns already registered."
+    echo -e "${GREEN}Provider ${YELLOW}$ns${GREEN} already registered.${NC}"
   fi
 }
 
@@ -56,13 +58,13 @@ prompt_input() {
   local current_value="${!var_name}"
   
   if [ -n "$current_value" ]; then
-    read -rp "$prompt_msg [$current_value]: " input
+    read -rp "$(echo -e "${CYAN}$prompt_msg ${YELLOW}[$current_value]${CYAN}: ${NC}")" input
     if [ -n "$input" ]; then
       eval $var_name="$input"
     fi
   else
     while [ -z "${!var_name}" ]; do
-      read -rp "$prompt_msg: " $var_name
+      read -rp "$(echo -e "${CYAN}$prompt_msg: ${NC}")" $var_name
     done
   fi
 }
@@ -71,7 +73,9 @@ prompt_input() {
 # Main Script
 # -------------------------------
 
-echo "== Azure Monitor Labs Initialization =="
+echo -e "${BLUE}========================================${NC}"
+echo -e "${CYAN}Azure Monitor Labs Initialization${NC}"
+echo -e "${BLUE}========================================${NC}"
 
 # Set default values
 RESOURCE_GROUP="rg-azmon-lab"
@@ -82,9 +86,15 @@ MANAGED_GRAFANA="managed-gf"
 PROM_NAME="managed-pm"
 
 # Register necessary Azure providers
+echo -e "${CYAN}Registering Azure providers...${NC}"
 for ns in Microsoft.Insights Microsoft.OperationalInsights Microsoft.Monitor Microsoft.SecurityInsights Microsoft.Dashboard; do
   register_provider "$ns"
 done
+
+echo ""
+echo -e "${CYAN}🔧 Configuration Setup${NC}"
+echo -e "${CYAN}Please provide the following configuration values:${NC}"
+echo ""
 
 # Prompt for deployment parameters
 prompt_input "Enter the name for the Azure Resource Group" RESOURCE_GROUP
@@ -96,13 +106,14 @@ prompt_input "Enter the name for the Azure Monitor Workspace(Managed Prometheus)
 
 # Prompt for timezone for auto-shutdown configuration
 echo ""
-echo "Auto-shutdown will be configured for all VMs and VMSS at 7:00 PM in your timezone."
+echo -e "${CYAN}🕐 Auto-shutdown Configuration${NC}"
+echo -e "${CYAN}Auto-shutdown will be configured for all VMs and VMSS at 7:00 PM in your timezone.${NC}"
 
 # Default shutdown time
 local_time="19:00"
 
 # Prompt user for UTC offset
-read -p "Enter your time zone as UTC offset (e.g., UTC, UTC+1, UTC-5): " tz_input
+read -p "$(echo -e "${CYAN}Enter your time zone as UTC offset (e.g., UTC, UTC+1, UTC-5): ${NC}")" tz_input
 
 # Parse offset
 if [[ "$tz_input" == "UTC" ]]; then
@@ -110,7 +121,7 @@ if [[ "$tz_input" == "UTC" ]]; then
 elif [[ "$tz_input" =~ ^UTC([+-][0-9]{1,2})$ ]]; then
   offset="${BASH_REMATCH[1]}"
 else
-  echo "Invalid UTC offset format."
+  echo -e "${RED}Invalid UTC offset format.${NC}"
   exit 1
 fi
 # Get today's date in YYYY-MM-DD
@@ -123,19 +134,21 @@ datetime="$today $local_time"
 USER_TIMEZONE=$(date -u -d "$datetime $offset" +%H%M 2>/dev/null)
 
 if [[ -z "$USER_TIMEZONE" ]]; then
-  echo "Failed to convert time. Using fallback 1900 UTC."
+  echo -e "${YELLOW}Failed to convert time. Using fallback 1900 UTC.${NC}"
   USER_TIMEZONE="1900"
 fi
 
 
 # Fetch Azure subscription ID
+echo -e "${CYAN}Retrieving Azure subscription information...${NC}"
 SUBSCRIPTION_ID=$(az account show --query id -o tsv)
 if [ -z "$SUBSCRIPTION_ID" ]; then
-  echo "ERROR: Could not retrieve Azure subscription ID"
+  echo -e "${RED}ERROR: Could not retrieve Azure subscription ID${NC}"
   exit 1
 fi
 
 # Write user input to tfvars file
+echo -e "${CYAN}Creating configuration file...${NC}"
 ENV_DIR="azmon-labs/terraform/environments/default"
 mkdir -p "$ENV_DIR"
 
@@ -179,25 +192,32 @@ EOF
 
 # Display the created tfvars file
 echo ""
-echo "✅ terraform.tfvars has been created locally in: $ENV_DIR"
-echo "🔒 This file is private to your environment and NOT uploaded to GitHub."
+echo -e "${GREEN}✅ terraform.tfvars has been created locally in: ${YELLOW}$ENV_DIR${NC}"
+echo -e "${CYAN}🔒 This file is private to your environment and NOT uploaded to GitHub.${NC}"
 echo ""
-echo "📋 Deployment Summary:"
-echo "  - Resource Group: $RESOURCE_GROUP"
-echo "  - Location: $LOCATION"  
-echo "  - Log Analytics Workspace: $WORKSPACE_NAME"
-echo "  - Subscription ID: $SUBSCRIPTION_ID"
+echo -e "${BLUE}========================================${NC}"
+echo -e "${CYAN}📋 Deployment Summary:${NC}"
+echo -e "${CYAN}  - Resource Group: ${YELLOW}$RESOURCE_GROUP${NC}"
+echo -e "${CYAN}  - Location: ${YELLOW}$LOCATION${NC}"  
+echo -e "${CYAN}  - Log Analytics Workspace: ${YELLOW}$WORKSPACE_NAME${NC}"
+echo -e "${CYAN}  - Subscription ID: ${YELLOW}$SUBSCRIPTION_ID${NC}"
+echo -e "${BLUE}========================================${NC}"
 echo ""
-echo "🎯 Features Included:"
-echo "  - Windows VMSS with Azure Monitor Agent"
-echo "  - Ubuntu VM with Syslog DCR"
-echo "  - Windows VM for monitoring"
-echo "  - Red Hat VM with CEF DCR for Sentinel"
-echo "  - Auto-shutdown configured for 7:00 PM (your timezone)"
-echo "  - Network security and monitoring setup"
+echo -e "${CYAN}🎯 Features Included:${NC}"
+echo -e "${CYAN}  - Windows VMSS with Azure Monitor Agent${NC}"
+echo -e "${CYAN}  - Ubuntu VM with Syslog DCR${NC}"
+echo -e "${CYAN}  - Windows VM for monitoring${NC}"
+echo -e "${CYAN}  - Red Hat VM with CEF DCR for Sentinel${NC}"
+echo -e "${CYAN}  - Auto-shutdown configured for 7:00 PM (your timezone)${NC}"
+echo -e "${CYAN}  - Network security and monitoring setup${NC}"
 echo ""
-echo "⏰ Auto-shutdown will be configured automatically based on your system timezone."
-echo "💡 All VMs and VMSS will shutdown at 7:00 PM with 15-minute notification."
+echo -e "${CYAN}⏰ Auto-shutdown will be configured automatically based on your system timezone.${NC}"
+echo -e "${CYAN}💡 All VMs and VMSS will shutdown at 7:00 PM.${NC}"
+
+echo ""
+echo -e "${BLUE}========================================${NC}"
+echo -e "${GREEN}🚀 Starting Deployment Process...${NC}"
+echo -e "${BLUE}========================================${NC}"
 
 cd ~/azmon-labs/scripts
 chmod +x deploy-monitoring.sh
