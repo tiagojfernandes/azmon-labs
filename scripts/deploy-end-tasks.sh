@@ -114,11 +114,33 @@ configure_vmss_autoshutdown() {
   
   echo -e "  ${CYAN}📝 Configuring auto-shutdown for VMSS: ${YELLOW}$vmss_name${NC}"
   
-  # Note: VMSS auto-shutdown may not be directly supported via Azure CLI
-  # We'll attempt to use the VM command structure, but this may need manual configuration
-  echo -e "  ${YELLOW}⚠️  VMSS auto-shutdown may require manual configuration through Azure Portal${NC}"
-  echo -e "  ${CYAN}ℹ️  VMSS: ${YELLOW}$vmss_name${CYAN} - Please configure auto-shutdown manually if needed${NC}"
-  echo -e "  ${GREEN}✅ VMSS auto-shutdown notification completed (manual configuration may be required)${NC}"
+  cat > "$SCRIPT_DIR/vmss_shutdown_function/vmss_shutdown/function.json" <<EOF
+{
+  "bindings": [
+    {
+      "name": "mytimer",
+      "type": "timerTrigger",
+      "direction": "in",
+      "schedule": "0 0 $shutdown_time * * *"
+    }
+  ]
+}
+EOF
+
+cd "$SCRIPT_DIR/vmss_shutdown_function"
+zip -r ../vmss_shutdown_function.zip *
+
+az functionapp deployment source config-zip \
+  --resource-group $resource_group \
+  --name vmss_shutdown \
+  --src "$SCRIPT_DIR/vmss_shutdown_function.zip"
+
+az functionapp config appsettings set \
+  --resource-group $resource_group \
+  --name vmss_shutdown \
+  --settings RG_NAME="$resource_group" VMSS_NAME="$vmss_name"
+
+
 }
 
 # Configure auto-shutdown for all VMs

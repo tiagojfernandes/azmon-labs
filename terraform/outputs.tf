@@ -35,6 +35,7 @@ output  "prom_name" {
   value       = var.prom_name
 }
 
+/*
 
 # VM Names
 output "ubuntu_vm_name" {
@@ -52,13 +53,14 @@ output "redhat_vm_name" {
   value       = module.vm_redhat.vm_name
 }
 
+*/
 
 output "vmss_name" {
   description = "The name of the Windows Virtual Machine Scale Set"
   value       = module.vmss_windows.vmss_name
 }
 
-
+/*
 
 # VM IP Addresses
 output "redhat_vm_private_ip" {
@@ -66,3 +68,4 @@ output "redhat_vm_private_ip" {
   value       = module.vm_redhat.private_ip_address
 }
 
+*/
