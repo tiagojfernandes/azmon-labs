@@ -35,7 +35,6 @@ output  "prom_name" {
   value       = var.prom_name
 }
 
-/*
 
 # VM Names
 output "ubuntu_vm_name" {
@@ -53,7 +52,6 @@ output "redhat_vm_name" {
   value       = module.vm_redhat.vm_name
 }
 
-*/
 
 output "vmss_name" {
   description = "The name of the Windows Virtual Machine Scale Set"
@@ -76,12 +74,9 @@ output "storage_account_name" {
   value       = module.azure_function.storage_account_name
 }
 
-/*
 
 # VM IP Addresses
 output "redhat_vm_private_ip" {
   description = "The private (internal) IP address of the Red Hat Virtual Machine"
   value       = module.vm_redhat.private_ip_address
 }
-
-*/

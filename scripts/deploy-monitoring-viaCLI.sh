@@ -119,7 +119,7 @@ echo ""
 echo -e "${CYAN}🔄 Running AKS and Azure Monitor workspace configuration...${NC}"
 cd ~/azmon-labs/scripts
 chmod +x deploy-aks-managedsolutions.sh
-#./deploy-aks-managedsolutions.sh "$RESOURCE_GROUP" "$WORKSPACE_ID" "$WORKSPACE_NAME" "$AKS_CLUSTER" "$MANAGED_GRAFANA" "$PROM_NAME"
+./deploy-aks-managedsolutions.sh "$RESOURCE_GROUP" "$WORKSPACE_ID" "$WORKSPACE_NAME" "$AKS_CLUSTER" "$MANAGED_GRAFANA" "$PROM_NAME"
 
 # Run post-deployment tasks
 echo ""

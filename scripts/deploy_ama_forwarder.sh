@@ -25,8 +25,4 @@ sudo wget -O Forwarder_AMA_installer.py https://raw.githubusercontent.com/Azure/
 echo "Running installer..."
 sudo python3 Forwarder_AMA_installer.py
 
-# Create a test log file
-echo "Creating test log..."
-sudo touch /tmp/test.log
-
 echo "Installation completed successfully."

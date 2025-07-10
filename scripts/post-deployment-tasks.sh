@@ -55,22 +55,22 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # Execute the Sentinel AMA forwarder install script
 echo -e "${CYAN}🔧 Installing AMA Forwarder on Red Hat VM: ${YELLOW}$REDHAT_VM_NAME${NC}"
 
-#az vm run-command invoke \
-#  --resource-group "$RESOURCE_GROUP" \
-#  --name "$REDHAT_VM_NAME" \
-#  --command-id RunShellScript \
-#  --scripts "$(cat "$SCRIPT_DIR/deploy_ama_forwarder.sh")"
+az vm run-command invoke \
+  --resource-group "$RESOURCE_GROUP" \
+  --name "$REDHAT_VM_NAME" \
+  --command-id RunShellScript \
+  --scripts "$(cat "$SCRIPT_DIR/deploy_ama_forwarder.sh")"
 
 
 # Deploy the CEF simulator script on Ubuntu machine
 echo -e "${CYAN}🔧 Installing CEF Simulator on Ubuntu VM: ${YELLOW}$UBUNTU_VM_NAME${NC}"
 
-#az vm run-command invoke \
-#  --resource-group "$RESOURCE_GROUP" \
-#  --name "$UBUNTU_VM_NAME" \
-#  --command-id RunShellScript \
-#  --scripts "$(cat "$SCRIPT_DIR/deploy_cef_simulator.sh")" \
-#  --parameters "redhatip_input=$REDHAT_PRIVATE_IP"
+az vm run-command invoke \
+  --resource-group "$RESOURCE_GROUP" \
+  --name "$UBUNTU_VM_NAME" \
+  --command-id RunShellScript \
+  --scripts "$(cat "$SCRIPT_DIR/deploy_cef_simulator.sh")" \
+  --parameters "redhatip_input=$REDHAT_PRIVATE_IP"
 
 
 # Use the provided UTC time directly
@@ -122,9 +122,9 @@ configure_vmss_autoshutdown() {
 }
 
 # Configure auto-shutdown for all VMs
-#configure_vm_autoshutdown "$UBUNTU_VM_NAME" "$RESOURCE_GROUP" "$SHUTDOWN_TIME"
-#configure_vm_autoshutdown "$WINDOWS_VM_NAME" "$RESOURCE_GROUP" "$SHUTDOWN_TIME"
-#configure_vm_autoshutdown "$REDHAT_VM_NAME" "$RESOURCE_GROUP" "$SHUTDOWN_TIME"
+configure_vm_autoshutdown "$UBUNTU_VM_NAME" "$RESOURCE_GROUP" "$SHUTDOWN_TIME"
+configure_vm_autoshutdown "$WINDOWS_VM_NAME" "$RESOURCE_GROUP" "$SHUTDOWN_TIME"
+configure_vm_autoshutdown "$REDHAT_VM_NAME" "$RESOURCE_GROUP" "$SHUTDOWN_TIME"
 
 # Configure auto-shutdown for VMSS
 configure_vmss_autoshutdown "$VMSS_NAME" "$RESOURCE_GROUP" "$SHUTDOWN_TIME"
