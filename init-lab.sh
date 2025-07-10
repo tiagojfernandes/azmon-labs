@@ -225,5 +225,5 @@ echo -e "${GREEN}🚀 Starting Deployment Process...${NC}"
 echo -e "${BLUE}========================================${NC}"
 
 cd ~/azmon-labs/scripts
-chmod +x deploy-monitoring.sh
-bash deploy-monitoring.sh
+chmod +x deploy-monitoring-viaCLI.sh
+bash deploy-monitoring-viaCLI.sh

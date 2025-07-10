@@ -90,6 +90,12 @@ echo ""
 echo -e "${CYAN}📦 Deploying Azure Function code...${NC}"
 cd ~/azmon-labs/scripts/function_code
 
+# Extract hour from USER_TIMEZONE (HHMM format)
+UTC_HOUR=${USER_TIMEZONE:0:2}
+
+# Update the cron schedule in function_app.py
+sed -i "s/\"0 0 19 \* \* \*/\"0 0 $UTC_HOUR * * */g" function_app.py
+
 # Create a zip package with the function code
 echo -e "${CYAN}Creating deployment package...${NC}"
 zip -r ../function_deployment.zip . -x "*.git*" "*.DS_Store*" "*.pyc" "__pycache__/*" "local.settings.json"
@@ -119,8 +125,8 @@ chmod +x deploy-aks-managedsolutions.sh
 echo ""
 echo -e "${CYAN}🔄 Running post-deployment configuration...${NC}"
 cd ~/azmon-labs/scripts
-chmod +x deploy-end-tasks.sh
-./deploy-end-tasks.sh "$RESOURCE_GROUP" "$REDHAT_VM_NAME" "$UBUNTU_VM_NAME" "$WINDOWS_VM_NAME" "$VMSS_NAME" "$REDHAT_PRIVATE_IP" "$USER_TIMEZONE"
+chmod +x post-deployment-tasks.sh
+./post-deployment-tasks.sh "$RESOURCE_GROUP" "$REDHAT_VM_NAME" "$UBUNTU_VM_NAME" "$WINDOWS_VM_NAME" "$VMSS_NAME" "$REDHAT_PRIVATE_IP" "$USER_TIMEZONE"
 
 echo ""
 echo -e "${BLUE}========================================${NC}"
