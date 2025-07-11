@@ -95,8 +95,8 @@ UTC_HOUR=${USER_TIMEZONE:0:2}
 
 echo -e "${CYAN}Updating function schedule to ${UTC_HOUR}:00 UTC...${NC}"
 
-# Update the cron schedule in function.json (this is what Azure Functions uses)
-sed -i "s/\"0 0 19 \* \* \*/\"0 0 $UTC_HOUR * * */g" VMSSShutdown/function.json
+# Update the cron schedule in function_app.py for v2 programming model
+sed -i "s/@app.timer_trigger(schedule=\"0 0 19 \* \* \*\"/@app.timer_trigger(schedule=\"0 0 $UTC_HOUR * * *\"/g" function_app.py
 
 # Create a zip package with the function code
 echo -e "${CYAN}Creating deployment package...${NC}"

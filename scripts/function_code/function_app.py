@@ -4,7 +4,11 @@ import os
 from azure.identity import DefaultAzureCredential
 from azure.mgmt.compute import ComputeManagementClient
 
-def main(mytimer: func.TimerRequest) -> None:
+app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
+
+@app.function_name("VMSSShutdown")
+@app.timer_trigger(schedule="0 0 19 * * *", arg_name="mytimer", run_on_startup=False)
+def vmss_shutdown_timer(mytimer: func.TimerRequest) -> None:
     """
     Azure Function to shutdown VMSS instances at scheduled time
     Default schedule: 19:00 UTC (7:00 PM)
