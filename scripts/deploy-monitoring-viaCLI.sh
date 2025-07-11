@@ -93,8 +93,10 @@ cd ~/azmon-labs/scripts/function_code
 # Extract hour from USER_TIMEZONE (HHMM format)
 UTC_HOUR=${USER_TIMEZONE:0:2}
 
-# Update the cron schedule in function_app.py
-sed -i "s/\"0 0 19 \* \* \*/\"0 0 $UTC_HOUR * * */g" function_app.py
+echo -e "${CYAN}Updating function schedule to ${UTC_HOUR}:00 UTC...${NC}"
+
+# Update the cron schedule in function.json (this is what Azure Functions uses)
+sed -i "s/\"0 0 19 \* \* \*/\"0 0 $UTC_HOUR * * */g" VMSSShutdown/function.json
 
 # Create a zip package with the function code
 echo -e "${CYAN}Creating deployment package...${NC}"

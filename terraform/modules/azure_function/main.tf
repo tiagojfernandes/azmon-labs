@@ -39,7 +39,7 @@ resource "azurerm_linux_function_app" "vmss_shutdown_func" {
 
   site_config {
     application_stack {
-      python_version = "3.9"
+      python_version = "3.12"
     }
   }
 
@@ -51,6 +51,8 @@ resource "azurerm_linux_function_app" "vmss_shutdown_func" {
     "FUNCTIONS_WORKER_RUNTIME" = "python"
     "WEBSITE_RUN_FROM_PACKAGE" = "1"
     "AZURE_SUBSCRIPTION_ID"   = data.azurerm_client_config.current.subscription_id
+    "FUNCTIONS_EXTENSION_VERSION" = "~4"
+    "AzureWebJobsFeatureFlags" = "EnableWorkerIndexing"
     # RG_NAME and VMSS_NAME will be set via the deployment script
   }
 

@@ -4,16 +4,19 @@ import os
 from azure.identity import DefaultAzureCredential
 from azure.mgmt.compute import ComputeManagementClient
 
-app = func.FunctionApp()
-
-@app.function_name("VMSSShutdown")
-@app.timer_trigger(schedule="0 0 19 * * *", arg_name="mytimer", run_on_startup=False)
-def vmss_shutdown_timer(mytimer: func.TimerRequest) -> None:
+def main(mytimer: func.TimerRequest) -> None:
     """
     Azure Function to shutdown VMSS instances at scheduled time
     Default schedule: 19:00 UTC (7:00 PM)
     """
-    logging.info('VMSS shutdown timer triggered')
+    utc_timestamp = mytimer.utc_timestamp.replace(
+        tzinfo=None
+    ).isoformat()
+    
+    if mytimer.past_due:
+        logging.info('The timer is past due!')
+    
+    logging.info('VMSS shutdown timer triggered at %s', utc_timestamp)
     
     try:
         # Get environment variables
@@ -23,6 +26,9 @@ def vmss_shutdown_timer(mytimer: func.TimerRequest) -> None:
         
         if not all([subscription_id, resource_group_name, vmss_name]):
             logging.error("Missing required environment variables")
+            logging.error(f"AZURE_SUBSCRIPTION_ID: {subscription_id}")
+            logging.error(f"RG_NAME: {resource_group_name}")
+            logging.error(f"VMSS_NAME: {vmss_name}")
             return
         
         # Authenticate using managed identity
