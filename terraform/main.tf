@@ -76,7 +76,7 @@ module "azure_function" {
   depends_on = [module.resource_group]
 }
 
-
+/*
 # Network Interface for Ubuntu VM
 resource "azurerm_public_ip" "ubuntu_vm_public_ip" {
   name                = "${var.ubuntu_vm_name}-public-ip"
@@ -510,3 +510,5 @@ resource "azurerm_monitor_data_collection_rule_association" "syslog_dcr_ubuntu_a
   data_collection_rule_id = azurerm_monitor_data_collection_rule.syslog_dcr.id
   target_resource_id      = module.vm_ubuntu.vm_id
 }
+
+*/

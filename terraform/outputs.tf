@@ -20,21 +20,7 @@ output "user_timezone" {
   value       = var.user_timezone
 }
 
-output  "aks_name" {
-  description = "AKS Cluster name"
-  value       = var.aks_name
-}
-
-output  "grafana_name" {
-  description = "Managed Grafana name"
-  value       = var.grafana_name
-}
-
-output  "prom_name" {
-  description = "Managed Prometheus name"
-  value       = var.prom_name
-}
-
+/*
 
 # VM Names
 output "ubuntu_vm_name" {
@@ -52,6 +38,28 @@ output "redhat_vm_name" {
   value       = module.vm_redhat.vm_name
 }
 
+output  "aks_name" {
+  description = "AKS Cluster name"
+  value       = var.aks_name
+}
+
+output  "grafana_name" {
+  description = "Managed Grafana name"
+  value       = var.grafana_name
+}
+
+output  "prom_name" {
+  description = "Managed Prometheus name"
+  value       = var.prom_name
+}
+
+# VM IP Addresses
+output "redhat_vm_private_ip" {
+  description = "The private (internal) IP address of the Red Hat Virtual Machine"
+  value       = module.vm_redhat.private_ip_address
+}
+
+*/
 
 output "vmss_name" {
   description = "The name of the Windows Virtual Machine Scale Set"
@@ -75,8 +83,4 @@ output "storage_account_name" {
 }
 
 
-# VM IP Addresses
-output "redhat_vm_private_ip" {
-  description = "The private (internal) IP address of the Red Hat Virtual Machine"
-  value       = module.vm_redhat.private_ip_address
-}
+
