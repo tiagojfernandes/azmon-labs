@@ -169,8 +169,8 @@ module "vm_ubuntu" {
   resource_group_name = module.resource_group.name
   location            = var.location
   vm_size             = var.ubuntu_vm_size
-  admin_username      = var.ubuntu_admin_username
-  admin_password      = var.ubuntu_admin_password
+  admin_username      = var.admin_username
+  admin_password      = var.admin_password
   nic_id              = azurerm_network_interface.ubuntu_vm_nic.id
   workspace_id        = module.log_analytics.workspace_id
 
@@ -275,8 +275,8 @@ module "vm_windows" {
   resource_group_name = module.resource_group.name
   location            = var.location
   vm_size             = var.windows_vm_size
-  admin_username      = var.windows_admin_username
-  admin_password      = var.windows_admin_password
+  admin_username      = var.admin_username
+  admin_password      = var.admin_password
   nic_id              = azurerm_network_interface.windows_vm_nic.id
 
   tags = {
@@ -403,8 +403,8 @@ module "vm_redhat" {
   resource_group_name = module.resource_group.name
   location            = var.location
   vm_size             = var.redhat_vm_size
-  admin_username      = var.redhat_admin_username
-  admin_password      = var.redhat_admin_password
+  admin_username      = var.admin_username
+  admin_password      = var.admin_password
   nic_id              = azurerm_network_interface.redhat_vm_nic.id
   workspace_id        = module.log_analytics.workspace_id
 

@@ -100,7 +100,12 @@ sed -i "s/\"0 0 19 \* \* \*/\"0 0 $UTC_HOUR * * */g" VMSSShutdown/function.json
 
 # Create a zip package with the function code
 echo -e "${CYAN}Creating deployment package...${NC}"
+# Ensure we include the VMSSShutdown directory and its contents
 zip -r ../function_deployment.zip . -x "*.git*" "*.DS_Store*" "*.pyc" "__pycache__/*" "local.settings.json"
+
+# Verify the zip contents
+echo -e "${CYAN}Verifying deployment package contents...${NC}"
+unzip -l ../function_deployment.zip
 
 echo -e "${CYAN}Deploying function code to Azure...${NC}"
 az functionapp deployment source config-zip \

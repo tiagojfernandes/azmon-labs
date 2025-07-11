@@ -138,6 +138,39 @@ if [[ -z "$USER_TIMEZONE" ]]; then
   USER_TIMEZONE="1900"
 fi
 
+# Prompt for common admin password
+echo ""
+echo -e "${CYAN}🔐 Security Configuration${NC}"
+echo -e "${CYAN}All VMs and VMSS will use 'azureuser' as the common username.${NC}"
+echo -e "${CYAN}Please provide a secure password for all resources:${NC}"
+echo -e "${YELLOW}Password requirements: 12+ characters, uppercase, lowercase, digit, special character${NC}"
+
+while true; do
+  read -s -p "$(echo -e "${CYAN}Enter admin password: ${NC}")" ADMIN_PASSWORD
+  echo ""
+  read -s -p "$(echo -e "${CYAN}Confirm admin password: ${NC}")" ADMIN_PASSWORD_CONFIRM
+  echo ""
+  
+  if [ "$ADMIN_PASSWORD" != "$ADMIN_PASSWORD_CONFIRM" ]; then
+    echo -e "${RED}Passwords do not match. Please try again.${NC}"
+    continue
+  fi
+  
+  # Basic password validation
+  if [[ ${#ADMIN_PASSWORD} -lt 12 ]]; then
+    echo -e "${RED}Password must be at least 12 characters long.${NC}"
+    continue
+  fi
+  
+  if [[ ! "$ADMIN_PASSWORD" =~ [A-Z] ]] || [[ ! "$ADMIN_PASSWORD" =~ [a-z] ]] || [[ ! "$ADMIN_PASSWORD" =~ [0-9] ]] || [[ ! "$ADMIN_PASSWORD" =~ [^A-Za-z0-9] ]]; then
+    echo -e "${RED}Password must contain uppercase, lowercase, digit, and special character.${NC}"
+    continue
+  fi
+  
+  echo -e "${GREEN}✅ Password accepted${NC}"
+  break
+done
+
 
 # Fetch Azure subscription ID
 echo -e "${CYAN}Retrieving Azure subscription information...${NC}"
@@ -166,27 +199,23 @@ prom_name           = "$PROM_NAME"
 # Network Configuration
 subnet_name = "vmss_subnet"
 
+# Common Admin Credentials (used for all VMs and VMSS)
+admin_username = "azureuser"
+admin_password = "$ADMIN_PASSWORD"
+
 # VMSS Configuration
 vmss_name      = "vmss-win"
-admin_username = "adminuser"
-admin_password = "P@ssw0rd123!"
 
 # Ubuntu VM Configuration
 ubuntu_vm_name         = "vm-ubuntu-lab"
-ubuntu_admin_username  = "azureuser"
 ubuntu_vm_size         = "Standard_B2s"
-ubuntu_admin_password  = "P@ssw0rd123!"
 
 # Windows VM Configuration
 windows_vm_name         = "vm-windows-lab"
-windows_admin_username  = "adminuser"
-windows_admin_password  = "P@ssw0rd123!"
 windows_vm_size         = "Standard_B2s"
 
 # Red Hat VM Configuration
 redhat_vm_name         = "vm-redhat-lab"
-redhat_admin_username  = "azureuser"
-redhat_admin_password  = "P@ssw0rd123!"
 redhat_vm_size         = "Standard_B2s"
 
 # Azure Function Configuration
@@ -215,9 +244,12 @@ echo -e "${CYAN}  - Windows VM for monitoring${NC}"
 echo -e "${CYAN}  - Red Hat VM with CEF DCR for Sentinel${NC}"
 echo -e "${CYAN}  - Auto-shutdown configured for 7:00 PM (your timezone)${NC}"
 echo -e "${CYAN}  - Network security and monitoring setup${NC}"
+echo -e "${CYAN}  - Common 'azureuser' account across all resources${NC}"
+echo -e "${CYAN}  - Secure password with complexity validation${NC}"
 echo ""
 echo -e "${CYAN}⏰ Auto-shutdown will be configured automatically based on your system timezone.${NC}"
 echo -e "${CYAN}💡 All VMs and VMSS will shutdown at 7:00 PM.${NC}"
+echo -e "${CYAN}🔐 All resources use 'azureuser' with your secure password.${NC}"
 
 echo ""
 echo -e "${BLUE}========================================${NC}"
