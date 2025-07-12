@@ -100,23 +100,23 @@ sed -i "s/@app.timer_trigger(schedule=\"0 0 19 \* \* \*\"/@app.timer_trigger(sch
 
 # Create a zip package with the function code
 echo -e "${CYAN}Creating deployment package...${NC}"
-# Ensure we include the VMSSShutdown directory and its contents
-zip -r ../function_deployment.zip . -x "*.git*" "*.DS_Store*" "*.pyc" "__pycache__/*" "local.settings.json"
+# Package the v2 function files (function_app.py, host.json, requirements.txt)
+zip -r ../function_code.zip .
 
 # Verify the zip contents
 echo -e "${CYAN}Verifying deployment package contents...${NC}"
-unzip -l ../function_deployment.zip
+unzip -l ../function_code.zip
 
 echo -e "${CYAN}Deploying function code to Azure...${NC}"
 az functionapp deployment source config-zip \
   --resource-group "$RESOURCE_GROUP" \
   --name "$FUNCTION_APP_NAME" \
-  --src "../function_deployment.zip"
+  --src "../function_code.zip"
 
 echo -e "${GREEN}✅ Azure Function code deployed successfully${NC}"
 
 # Clean up deployment package
-rm -f ../function_deployment.zip
+#rm -f ../function_code.zip
 
 # Return to scripts directory  
 cd ~/azmon-labs/scripts

@@ -59,12 +59,14 @@ output "redhat_vm_private_ip" {
   value       = module.vm_redhat.private_ip_address
 }
 
-*/
-
 output "vmss_name" {
   description = "The name of the Windows Virtual Machine Scale Set"
   value       = module.vmss_windows.vmss_name
 }
+
+*/
+
+
 
 # Azure Function Outputs
 output "function_app_name" {
