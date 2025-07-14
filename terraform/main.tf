@@ -47,7 +47,7 @@ module "azure_function" {
   resource_group_name    = module.resource_group.name
   location               = var.location
   function_app_name      = var.function_app_name
-  storage_account_name   = var.storage_account_name
+  storage_account_prefix = var.storage_account_prefix
   app_service_plan_name  = var.app_service_plan_name
 
   depends_on = [module.resource_group]

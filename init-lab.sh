@@ -79,7 +79,7 @@ echo -e "${BLUE}========================================${NC}"
 
 # Set default values
 RESOURCE_GROUP="rg-azmon-lab"
-LOCATION="East US"
+LOCATION="uksouth"
 WORKSPACE_NAME="azmon-workspace"
 AKS_CLUSTER="aks-azmon"
 MANAGED_GRAFANA="managed-gf"
@@ -98,7 +98,7 @@ echo ""
 
 # Prompt for deployment parameters
 prompt_input "Enter the name for the Azure Resource Group" RESOURCE_GROUP
-prompt_input "Enter the Azure location (e.g., westeurope)" LOCATION
+prompt_input "Enter the Azure location supported by Sentinel (e.g., westeurope)" LOCATION
 prompt_input "Enter the name for the Log Analytics Workspace" WORKSPACE_NAME
 prompt_input "Enter the name for the AKS cluster" AKS_CLUSTER
 prompt_input "Enter the name for the Managed Grafana" MANAGED_GRAFANA
@@ -115,13 +115,16 @@ local_time="19:00"
 # Prompt user for UTC offset
 read -p "$(echo -e "${CYAN}Enter your time zone as UTC offset (e.g., UTC, UTC+1, UTC-5): ${NC}")" tz_input
 
+# Convert to uppercase for case-insensitive matching
+tz_input_upper=$(echo "$tz_input" | tr '[:lower:]' '[:upper:]')
+
 # Parse offset
-if [[ "$tz_input" == "UTC" ]]; then
+if [[ "$tz_input_upper" == "UTC" ]]; then
   offset="+0"
-elif [[ "$tz_input" =~ ^UTC([+-][0-9]{1,2})$ ]]; then
+elif [[ "$tz_input_upper" =~ ^UTC([+-][0-9]{1,2})$ ]]; then
   offset="${BASH_REMATCH[1]}"
 else
-  echo -e "${RED}Invalid UTC offset format.${NC}"
+  echo -e "${RED}Invalid UTC offset format. Please use format like UTC, UTC+1, UTC-5${NC}"
   exit 1
 fi
 # Get today's date in YYYY-MM-DD
@@ -219,9 +222,9 @@ redhat_vm_name         = "vm-redhat-lab"
 redhat_vm_size         = "Standard_B2s"
 
 # Azure Function Configuration
-function_app_name      = "vmss-shutdown-fn"
-storage_account_name   = "funcstorvmss1234"
-app_service_plan_name  = "vmss-fn-plan"
+function_app_name         = "vmss-shutdown-fn"
+storage_account_prefix    = "funcstorvmss"
+app_service_plan_name     = "vmss-fn-plan"
 EOF
 
 # Display the created tfvars file

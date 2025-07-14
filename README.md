@@ -40,8 +40,11 @@ Edit the Terraform variables in `terraform/environments/default/terraform.tfvars
 resource_group_name = "rg-azmon-lab"
 location = "East US"
 workspace_name = "law-azmon-lab"
+storage_account_prefix = "funcstorvmss"  # Will be made globally unique automatically
 # ... other variables
 ```
+
+**Note**: The `storage_account_prefix` will automatically have a random 8-character suffix added to ensure global uniqueness across all Azure subscriptions. For example, `funcstorvmss` becomes `funcstorvmssabc12345`.
 
 ### 3. Deploy the Lab
 
@@ -206,6 +209,14 @@ Deploys a timer-triggered Azure Function for VMSS auto-shutdown:
 - **Functionality**: Automatically deallocates VMSS instances at scheduled time
 - **Robust Deployment**: Includes retry logic and function readiness checks
 - **Timezone Support**: Schedule dynamically calculated based on user's local timezone
+- **Unique Storage**: Automatically generates globally unique storage account names with random suffixes
+
+#### Automatic Resource Naming
+
+The lab automatically handles globally unique resource naming:
+- **Storage Account**: Uses configurable prefix + random 8-character suffix (e.g., `funcstorvmssabc12345`)
+- **Validation**: Ensures prefix meets Azure naming requirements (lowercase, alphanumeric, ≤16 chars)
+- **No Conflicts**: Eliminates deployment failures due to name collisions across Azure tenants
 
 ## 📁 Project Structure
 
@@ -301,6 +312,19 @@ Edit the `SCHEDULE_EXPRESSION` in the Python function code before deployment:
 @app.timer_trigger(schedule="0 0 23 * * *", arg_name="myTimer", run_on_startup=False)
 ```
 
+### Customize Storage Account Naming
+
+Modify the storage account prefix in your `terraform.tfvars`:
+
+```hcl
+storage_account_prefix = "mycompanyfunc"  # Will become mycompanyfuncabc12345
+```
+
+**Requirements:**
+- Maximum 16 characters (to leave room for 8-character random suffix)
+- Lowercase letters and numbers only
+- Must be unique enough to avoid conflicts with your naming conventions
+
 ### Add Custom Data Collection Rules
 
 Create new DCR modules in `terraform/modules/` and reference them in `main.tf`.
@@ -332,6 +356,7 @@ terraform destroy -var-file="environments/default/terraform.tfvars"
 4. **Log forwarding issues**: Verify rsyslog configuration and network connectivity
 5. **VMSS Function deployment failures**: Check Azure Function App service plan and managed identity permissions
 6. **Function execution issues**: Verify the Function App has Contributor role on the VMSS resource group
+7. **Storage account naming conflicts**: The lab automatically handles this with random suffixes, but ensure your prefix is ≤16 characters and lowercase alphanumeric only
 
 ### Debug Commands
 

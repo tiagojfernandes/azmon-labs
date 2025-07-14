@@ -1,6 +1,16 @@
 # azure_function/main.tf
+
+# Generate a random suffix for globally unique storage account name
+resource "random_string" "storage_suffix" {
+  length  = 8
+  special = false
+  upper   = false
+  numeric = true
+  lower   = true
+}
+
 resource "azurerm_storage_account" "function_storage" {
-  name                     = var.storage_account_name
+  name                     = "${var.storage_account_prefix}${random_string.storage_suffix.result}"
   resource_group_name      = var.resource_group_name
   location                 = var.location
   account_tier             = "Standard"
