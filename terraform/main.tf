@@ -6,6 +6,10 @@ terraform {
       source  = "hashicorp/azurerm"
       version = "~> 3.0"
     }
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.0"
+    }
   }
 }
 
@@ -43,12 +47,12 @@ module "network" {
 
 # Azure Function for VMSS Auto-Shutdown
 module "azure_function" {
-  source                 = "./modules/azure_function"
-  resource_group_name    = module.resource_group.name
-  location               = var.location
-  function_app_name      = var.function_app_name
-  storage_account_prefix = var.storage_account_prefix
-  app_service_plan_name  = var.app_service_plan_name
+  source                    = "./modules/azure_function"
+  resource_group_name       = module.resource_group.name
+  location                  = var.location
+  function_app_prefix       = var.function_app_prefix
+  storage_account_prefix    = var.storage_account_prefix
+  app_service_plan_prefix   = var.app_service_plan_prefix
 
   depends_on = [module.resource_group]
 }
@@ -434,8 +438,8 @@ resource "azurerm_monitor_data_collection_rule" "cef_dcr" {
     syslog {
       name           = "syslog-cef"
       streams        = ["Microsoft-CommonSecurityLog"]
-      facility_names = ["*"]
-      log_levels     = ["*"]
+      facility_names = ["local0", "local1", "local2", "local3", "local4", "local5", "local6", "local7"]
+      log_levels     = ["Debug", "Info", "Notice", "Warning", "Error", "Critical", "Alert", "Emergency"]
     }
   }
 

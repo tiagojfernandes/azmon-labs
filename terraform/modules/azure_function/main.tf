@@ -1,7 +1,7 @@
 # azure_function/main.tf
 
-# Generate a random suffix for globally unique storage account name
-resource "random_string" "storage_suffix" {
+# Generate a random suffix for globally unique resource names
+resource "random_string" "unique_suffix" {
   length  = 8
   special = false
   upper   = false
@@ -10,7 +10,7 @@ resource "random_string" "storage_suffix" {
 }
 
 resource "azurerm_storage_account" "function_storage" {
-  name                     = "${var.storage_account_prefix}${random_string.storage_suffix.result}"
+  name                     = "${var.storage_account_prefix}${random_string.unique_suffix.result}"
   resource_group_name      = var.resource_group_name
   location                 = var.location
   account_tier             = "Standard"
@@ -23,7 +23,7 @@ resource "azurerm_storage_account" "function_storage" {
 }
 
 resource "azurerm_service_plan" "function_plan" {
-  name                = var.app_service_plan_name
+  name                = "${var.app_service_plan_prefix}-${random_string.unique_suffix.result}"
   location            = var.location
   resource_group_name = var.resource_group_name
   os_type             = "Linux"
@@ -36,7 +36,7 @@ resource "azurerm_service_plan" "function_plan" {
 }
 
 resource "azurerm_linux_function_app" "vmss_shutdown_func" {
-  name                = var.function_app_name
+  name                = "${var.function_app_prefix}-${random_string.unique_suffix.result}"
   location            = var.location
   resource_group_name = var.resource_group_name
   service_plan_id     = azurerm_service_plan.function_plan.id

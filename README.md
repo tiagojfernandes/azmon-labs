@@ -40,11 +40,16 @@ Edit the Terraform variables in `terraform/environments/default/terraform.tfvars
 resource_group_name = "rg-azmon-lab"
 location = "East US"
 workspace_name = "law-azmon-lab"
-storage_account_prefix = "funcstorvmss"  # Will be made globally unique automatically
+function_app_prefix = "vmss-shutdown-fn"      # Will be made globally unique automatically
+storage_account_prefix = "funcstorvmss"       # Will be made globally unique automatically
+app_service_plan_prefix = "vmss-fn-plan"      # Will be made globally unique automatically
 # ... other variables
 ```
 
-**Note**: The `storage_account_prefix` will automatically have a random 8-character suffix added to ensure global uniqueness across all Azure subscriptions. For example, `funcstorvmss` becomes `funcstorvmssabc12345`.
+**Note**: All Azure Function-related resource prefixes will automatically have a random 8-character suffix added to ensure global uniqueness across all Azure subscriptions. For example:
+- `vmss-shutdown-fn` becomes `vmss-shutdown-fn-abc12345`
+- `funcstorvmss` becomes `funcstorvmssabc12345`
+- `vmss-fn-plan` becomes `vmss-fn-plan-abc12345`
 
 ### 3. Deploy the Lab
 
@@ -213,9 +218,11 @@ Deploys a timer-triggered Azure Function for VMSS auto-shutdown:
 
 #### Automatic Resource Naming
 
-The lab automatically handles globally unique resource naming:
+The lab automatically handles globally unique resource naming for Azure Function components:
+- **Function App**: Uses configurable prefix + random 8-character suffix (e.g., `vmss-shutdown-fn-abc12345`)
 - **Storage Account**: Uses configurable prefix + random 8-character suffix (e.g., `funcstorvmssabc12345`)
-- **Validation**: Ensures prefix meets Azure naming requirements (lowercase, alphanumeric, ≤16 chars)
+- **App Service Plan**: Uses configurable prefix + random 8-character suffix (e.g., `vmss-fn-plan-abc12345`)
+- **Validation**: Ensures prefixes meet Azure naming requirements for each resource type
 - **No Conflicts**: Eliminates deployment failures due to name collisions across Azure tenants
 
 ## 📁 Project Structure
@@ -314,16 +321,19 @@ Edit the `SCHEDULE_EXPRESSION` in the Python function code before deployment:
 
 ### Customize Storage Account Naming
 
-Modify the storage account prefix in your `terraform.tfvars`:
+Modify the Azure Function resource prefixes in your `terraform.tfvars`:
 
 ```hcl
-storage_account_prefix = "mycompanyfunc"  # Will become mycompanyfuncabc12345
+function_app_prefix = "mycompany-vmss-fn"     # Will become mycompany-vmss-fn-abc12345
+storage_account_prefix = "mycompanyfunc"      # Will become mycompanyfuncabc12345
+app_service_plan_prefix = "mycompany-plan"    # Will become mycompany-plan-abc12345
 ```
 
 **Requirements:**
-- Maximum 16 characters (to leave room for 8-character random suffix)
-- Lowercase letters and numbers only
-- Must be unique enough to avoid conflicts with your naming conventions
+- **Function App Prefix**: Maximum 50 characters, letters, numbers, and hyphens only
+- **Storage Account Prefix**: Maximum 16 characters, lowercase letters and numbers only
+- **App Service Plan Prefix**: Maximum 50 characters, letters, numbers, and hyphens only
+- All prefixes must be unique enough to avoid conflicts with your naming conventions
 
 ### Add Custom Data Collection Rules
 
@@ -357,6 +367,7 @@ terraform destroy -var-file="environments/default/terraform.tfvars"
 5. **VMSS Function deployment failures**: Check Azure Function App service plan and managed identity permissions
 6. **Function execution issues**: Verify the Function App has Contributor role on the VMSS resource group
 7. **Storage account naming conflicts**: The lab automatically handles this with random suffixes, but ensure your prefix is ≤16 characters and lowercase alphanumeric only
+8. **Function app naming conflicts**: The lab automatically handles this with random suffixes, but ensure your prefix is ≤50 characters and uses only letters, numbers, and hyphens
 
 ### Debug Commands
 

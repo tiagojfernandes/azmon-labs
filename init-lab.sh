@@ -222,9 +222,9 @@ redhat_vm_name         = "vm-redhat-lab"
 redhat_vm_size         = "Standard_B2s"
 
 # Azure Function Configuration
-function_app_name         = "vmss-shutdown-fn"
+function_app_prefix       = "vmss-shutdown-fn"
 storage_account_prefix    = "funcstorvmss"
-app_service_plan_name     = "vmss-fn-plan"
+app_service_plan_prefix   = "vmss-fn-plan"
 EOF
 
 # Display the created tfvars file
