@@ -93,10 +93,18 @@ def vmss_shutdown(mytimer: func.TimerRequest) -> None:
     """
      VMSS shutdown function with comprehensive error handling
     """
-    utc_timestamp = mytimer.utc_timestamp.replace(tzinfo=None).isoformat()
+    # Fix: Handle Azure Functions v2 timer request properly
+    from datetime import datetime
     
-    if mytimer.past_due:
-        logger.info('The timer is past due!')
+    # Use current UTC time since v2 model handles timing differently
+    utc_timestamp = datetime.utcnow().isoformat()
+    
+    # Check if timer is past due (this should still work in v2)
+    try:
+        if mytimer.past_due:
+            logger.info('The timer is past due!')
+    except AttributeError:
+        logger.info('Timer past_due check not available in this version')
     
     logger.info(' VMSS shutdown timer triggered at %s', utc_timestamp)
     logger.info(f'Python version: {sys.version}')

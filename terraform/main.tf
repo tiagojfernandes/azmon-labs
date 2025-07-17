@@ -329,6 +329,7 @@ resource "azurerm_network_security_group" "redhat_vm_nsg" {
   location            = var.location
   resource_group_name = module.resource_group.name
 
+  /*
   security_rule {
     name                       = "allow_ssh"
     priority                   = 1000
@@ -340,7 +341,7 @@ resource "azurerm_network_security_group" "redhat_vm_nsg" {
     source_address_prefix      = local.my_ip
     destination_address_prefix = "*"
   }
-
+*/
   security_rule {
     name                       = "allow_http"
     priority                   = 1100

@@ -59,6 +59,8 @@ resource "azurerm_lb_rule" "rdp_rule" {
   probe_id                       = azurerm_lb_probe.rdp_probe.id
 }
 
+/*
+
 resource "azurerm_network_security_group" "nsg" {
   name                = "nsg-lab"
   location            = var.location
@@ -81,3 +83,5 @@ resource "azurerm_subnet_network_security_group_association" "subnet_nsg" {
   subnet_id                 = azurerm_subnet.subnet.id
   network_security_group_id = azurerm_network_security_group.nsg.id
 }
+
+*/
