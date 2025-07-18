@@ -297,15 +297,30 @@ EOF
 echo -e "${CYAN}Files created for  VMSS function:${NC}"
 ls -la
 
-echo -e "${CYAN}Deploying  VMSS function...${NC}"
-zip -r ../vmss_shutdown.zip .
+#echo -e "${CYAN}Installing Python packages locally...${NC}"
+# Create the required directory structure for pre-installed packages
+#mkdir -p .python_packages/lib/site-packages
 
-az functionapp deployment source config-zip \
-  --resource-group "$RESOURCE_GROUP" \
-  --name "$FUNCTION_APP_NAME" \
-  --src "../vmss_shutdown.zip"
+# Install packages locally into the function directory
+#pip install -r requirements.txt -t .python_packages/lib/site-packages
 
-echo -e "${GREEN}✅  VMSS function deployment initiated${NC}"
+#echo -e "${CYAN}Installed packages:${NC}"
+#ls -la .python_packages/lib/site-packages | head -20
+
+#echo -e "${CYAN}Deploying  VMSS function with pre-installed packages...${NC}"
+#zip -r ../vmss_shutdown.zip .
+
+
+#az functionapp deployment source config-zip \
+#  --resource-group "$RESOURCE_GROUP" \
+#  --name "$FUNCTION_APP_NAME" \
+#  --src "../vmss_shutdown.zip"
+
+echo -e "${CYAN}Publishing Function via func CLI...${NC}"
+cd ~/azmon-labs/scripts/vmss_shutdown
+func azure functionapp publish "$FUNCTION_APP_NAME" --python
+
+#echo -e "${GREEN}✅  VMSS function deployment initiated${NC}"
 
 # Set environment variables
 echo -e "${CYAN}Setting environment variables...${NC}"
