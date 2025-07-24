@@ -386,7 +386,7 @@ resource "azurerm_monitor_data_collection_rule" "cef_dcr" {
     syslog {
       name           = "syslog-cef"
       streams        = ["Microsoft-CommonSecurityLog"]
-      facility_names = ["auth", "authpriv", "cron", "daemon", "kern", "lpr", "mail", "mark", "news", "syslog", "user", "uucp", "local0", "local1", "local2", "local3", "local4", "local5", "local6", "local7"]
+      facility_names = ["user", "mail", "daemon", "auth", "syslog", "lpr", "news", "uucp", "ftp", "ntp", "audit", "alert", "mark", "local0", "local1", "local2", "local3", "local4", "local5", "local6", "local7"]
       log_levels     = ["Debug", "Info", "Notice", "Warning", "Error", "Critical", "Alert", "Emergency"]
     }
   }
@@ -430,7 +430,7 @@ resource "azurerm_monitor_data_collection_rule" "syslog_dcr" {
     syslog {
       name           = "syslog-all"
       streams        = ["Microsoft-Syslog"]
-      facility_names = ["auth", "authpriv", "cron", "daemon", "kern", "lpr", "mail", "mark", "news", "syslog", "user", "uucp", "local0", "local1", "local2", "local3", "local4", "local5", "local6", "local7"]
+      facility_names = ["user", "mail", "daemon", "auth", "syslog", "lpr", "news", "uucp", "ftp", "ntp", "audit", "alert", "mark", "local0", "local1", "local2", "local3", "local4", "local5", "local6", "local7"]
       log_levels     = ["Debug", "Info", "Notice", "Warning", "Error", "Critical", "Alert", "Emergency"]
     }
   }
@@ -469,7 +469,7 @@ module "automation_runbook" {
   location                = var.location
   automation_account_name = var.automation_account_name
   vmss_name               = var.vmss_name
-  user_timezone_hour      = "${substr(var.user_timezone, 0, 2)}:${substr(var.user_timezone, 2, 2)}"
+  user_timezone_hour      = length(var.user_timezone) == 4 ? "${substr(var.user_timezone, 0, 2)}:${substr(var.user_timezone, 2, 2)}" : "19:00"
   subscription_id         = var.subscription_id
   aks_name                = var.aks_name
 
