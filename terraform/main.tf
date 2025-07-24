@@ -387,7 +387,7 @@ resource "azurerm_monitor_data_collection_rule" "cef_dcr" {
       name           = "syslog-cef"
       streams        = ["Microsoft-CommonSecurityLog"]
       facility_names = ["auth", "authpriv", "cron", "daemon", "kern", "lpr", "mail", "mark", "news", "syslog", "user", "uucp", "local0", "local1", "local2", "local3", "local4", "local5", "local6", "local7"]
-      log_levels     = ["debug", "info", "notice", "warning", "error", "critical", "alert", "emergency"]
+      log_levels     = ["Debug", "Info", "Notice", "Warning", "Error", "Critical", "Alert", "Emergency"]
     }
   }
 
@@ -431,7 +431,7 @@ resource "azurerm_monitor_data_collection_rule" "syslog_dcr" {
       name           = "syslog-all"
       streams        = ["Microsoft-Syslog"]
       facility_names = ["auth", "authpriv", "cron", "daemon", "kern", "lpr", "mail", "mark", "news", "syslog", "user", "uucp", "local0", "local1", "local2", "local3", "local4", "local5", "local6", "local7"]
-      log_levels     = ["debug", "info", "notice", "warning", "error", "critical", "alert", "emergency"]
+      log_levels     = ["Debug", "Info", "Notice", "Warning", "Error", "Critical", "Alert", "Emergency"]
     }
   }
 
